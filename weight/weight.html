@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		var weight;
+		var comm; 
+		var date = new Date();
+		var val = {};
+		
+		$('#weight,#comm').val(localStorage.length+1);
+		
+		$('form').bind('submit',function(event){
+			event.preventDefault();
+			
+			$('#weight,#comm').val(localStorage.length+1);
+			
+			
+			val.id = entryId();
+			val.date = time();
+			val.input = $('#weight').val();
+			val.comm = $('#comm').val();
+			
+			var toInsert = JSON.stringify(val);
+			localStorage.setItem(localStorage.length+1,toInsert);
+			
+			display();
+			
+			
+		});
+		
+		function time(){
+			var date = new Date();
+			mon = date.getMonth()+1;
+			day = date.getDate();
+			yr = date.getFullYear();
+			hr = date.getHours();
+			min = date.getMinutes();
+			now = mon+"/"+day+"/"+yr + " at "+hr+':'+min;		
+			return now;
+		}
+		
+		//deprecated
+		function entryId(){
+			var storage;
+			if(localStorage.length>0){
+				storage = localStorage.length + 1;
+				//console.log('localStorage= true');
+				//storage=true;
+			} else{
+				//console.log('localStorage= false');
+				//storage= false;
+				storage = 1;
+			}
+			return storage;
+		}
+	
+		function display(){			
+			console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
+			console.log('*************************************');
+			console.log('localStorage length: '+localStorage.length);
+			console.log('*************************************');
+			for(var i = 0 ; localStorage.length>i;i++){
+				console.log(localStorage.getItem(localStorage.key(i)));
+				var parsed = JSON.parse(localStorage.getItem(localStorage.key(i)));
+				console.log('id: '+parsed.id +' input: ' +parsed.input);
+				console.log('=====================================');
+			}
+		}
+		
+		
+		$('#clearButton').click(function(){
+				for(var i = 0; entryId()>i;i++){
+					localStorage.removeItem(i);
+				}
+			localStorage.clear()
+			console.log('clear!!!!');
+			display();
+			
+		});
+		
+		$('#show').click(function(){
+			display();
+		});
+	
+	});
+	</script>
+</head>
+<body>
+	<form action="#">
+		<input type="text" name="weight" id="weight"/>
+		<br/>
+		<textarea name="comment" id="comm" cols="30" rows="10"></textarea>
+		<br/>
+		<input type="submit" value="Submit Weight" id="submit"/>
+		<br/>
+		<input type="button" value="show" id="show"/>
+		<br/>
+		<input type="button" value="clear" id="clearButton"/>
+		<br/>
+	</form>
+	<div id="content">
+		<p id="one"></p>
+	</div>
+</body>
+</html>

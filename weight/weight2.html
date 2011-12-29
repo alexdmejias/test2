@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
+	
+	
+	<!-- <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js">  -->
+	
+	
+	<script type="text/javascript">
+	$(function(){
+		
+		
+		
+		function time(){
+			var date = new Date();
+			mon = date.getMonth()+1;
+			day = date.getDate();
+			yr = date.getFullYear();
+			hr = date.getHours();
+			min = date.getMinutes();
+			sec = date.getSeconds();
+			now = mon+"/"+day+"/"+yr+' '+hr+':'+min+':'+sec;		
+			return now;
+		}
+		
+		$('#one p').text('one p ');
+		var now = time();
+		//db = openDatabase('weight','1','testasd XX',2*1024*1024);
+		XX = openDatabase('sat','1','testasd XX',2*1024*1024);
+		
+		$('#all').bind('click',function(){
+			selectAll();
+		});
+		//INIT
+		$('#init').bind('click',function(){
+			init();
+		});
+				
+
+		//insert values
+		$('#button').bind('click',function(){
+			insert();
+			
+		});
+		//dummy text
+		$('#dummy').bind('click',function(){
+			dummy();
+			
+		});	
+		
+		
+		function selectAll(){
+			XX.transaction(function(tx){
+				tx.executeSql('SELECT * FROM weights4',[],display,e);
+			});	
+		}
+		
+		
+
+   
+		function display(tx,result){
+				$('#two').html('');
+			console.log('======================================');
+			for (var i = 0; i<result.rows.length;i++){
+				console.log(result.rows.item(i)['id']+ '   ' + result.rows.item(i)['input']+ '   ' + result.rows.item(i)['comm']+ '   ' + result.rows.item(i)['date']);
+				var p = result.rows.item(i)['id']+ '   ' + result.rows.item(i)['input']+ '   ' + result.rows.item(i)['comm']+ '   ' + result.rows.item(i)['date'];
+				$('#two').append('<p>'+p+'</p>');
+			}
+			console.log('======================================');
+		}
+	 
+		function l(txt){
+			console.log(txt);
+		}
+		function e(tx,error){
+			console.log(error);
+		}
+		
+		function s(tx,result){
+			console.log('it was succesful');
+			console.log(result);
+		}
+		
+		function init(){
+			XX.transaction(function(tx){
+				tx.executeSql('CREATE TABLE IF NOT EXISTS weights4 (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, input TEXT, comm TEXT,date DATE NOT NULL)',[],s,e);
+			
+		
+			});
+		};
+		
+		function insert(){
+			var input = $('#input').val();
+			var comm = $('#comm').val();
+			
+			XX.transaction(
+				function(tx){
+					tx.executeSql('INSERT INTO weights4 (input,comm,date) VALUES(?,?,?)',[input,comm,now],s,e);
+				}
+			);				
+		};
+		
+		function dummy(){
+			XX.transaction(
+				function(tx){
+					tx.executeSql('INSERT INTO weights4 (input,comm,date) values("test","test",?)',[now],s,e);
+				}
+			);
+		};
+		
+			
+		
+
+		
+		$('#page').click(function() {
+			$('#one').animate({
+				
+				left: '-=240',
+				
+			}, 250, function() {
+				console.log('1 compoleted');
+			});
+			$('#two').animate({
+				
+				left: '-=240',
+				
+			}, 250, function() {
+				console.log('2 compoleted');
+			});			
+		});
+		
+		$('#cont').click(function() {
+			$('#two').animate({
+				
+				left: '+=240',
+				
+			}, 250, function() {
+				console.log('1 compoleted');
+			});
+			$('#one').animate({
+				
+				left: '+=240',
+				
+			}, 250, function() {
+				console.log('2 compoleted');
+			});			
+		});		
+	});//end script
+	
+	</script>
+	<style type="text/css">
+	body{
+		margin:0;
+		padding:0;
+		max-height:500px;
+		height:500px;
+	}
+	#one{
+		width:240px;
+		float:left;
+		background:#ccc;
+		position:absolute;
+	}
+	#two{
+		width:240px;
+		background:#cfc;
+		float:left;
+		left:240px;
+		position:absolute;
+		max-height:300px;
+		overflow:visible;
+		height:500px;
+	}
+	</style>
+</head>
+<body>
+	<div data-role="page" id="one">
+
+		<div data-role="header">
+			<h1>My Title</h1>
+		</div><!-- /header -->
+
+		<div data-role="content">	
+			<fieldset class="ui-grid-a">
+				<div class="ui-block-a">
+					<input type="button" id="init" value="init" />
+					<input type="button" id="button" value="insert"/>
+					<input type="button" id="all" value="select all"/>
+				</div>
+				<div class="ui-block-b">
+					<input type="button" id="dummy" value="insert dummmy"/>
+					<input type="button" id="inc" value="inc"/>
+				</div>
+			</fieldset>
+			
+			<input type="text" id="input"/>
+			<textarea name="comm" id="comm" cols="25" rows="10"></textarea>
+			<a href="#" id="page">go to page two</a>
+
+			
+		</div><!-- /content -->
+
+	</div>
+	
+	<div data-role="page" id="two">
+
+		<div data-role="content">	
+			<p id="show">this is page two</p>
+			<p id="cont">wasd</p>
+			
+		</div>
+
+	</div>
+
+</body>
+</html>
